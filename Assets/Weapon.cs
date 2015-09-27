@@ -40,7 +40,7 @@ public class Weapon : MonoBehaviour {
 		GameObject arrow = (GameObject)Instantiate(arrowPrefab, new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0), Quaternion.identity);
 		ArmRotation arm = GetComponent <ArmRotation>();
 		Rigidbody2D rigidBody = arrow.GetComponent<Rigidbody2D> ();
-		rigidBody.velocity = new Vector2 (arm.getAngle().x * shotSpeed, arm.getAngle().y* shotSpeed);
+		rigidBody.velocity = new Vector2 (Mathf.Cos(arm.angle2) * shotSpeed, Mathf.Sin(arm.angle2) * shotSpeed);
 
 		currentProjectile = arrow;
 	}

@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class ApolloAI : MonoBehaviour {
 
 	[SerializeField]
+	private int hp = 10;
 	private float speed = 5f;
 	private Rigidbody2D mRigidBody;
 	private Material mat;
 	private Color[] colors = {Color.yellow, Color.red};
 	private Color origColor;
-	private bool isColliderEnable = true;
+	private bool invincible = false;
+	public Text textHP;
 
 	void Awake()
 	{
@@ -21,16 +24,19 @@ public class ApolloAI : MonoBehaviour {
 	void Start () {
 		mRigidBody = GetComponent<Rigidbody2D> ();
 		mRigidBody.velocity = new Vector2 (speed, 0);
-
+		textHP.text = "Enemy HP: " + hp;
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		if (isColliderEnable) {
+		if (!invincible) {
 
 			if(col.name == "Arrow(Clone)")
 			{
+				ArrowScript arrow = col.GetComponent<ArrowScript>();
+				hp -= arrow.getDamage();
 				Destroy (col.gameObject);
+				textHP.text = "Enemy HP: " + hp;
 				StartCoroutine(Flash(.5f, 0.05f));
 			}
 		}
@@ -51,6 +57,7 @@ public class ApolloAI : MonoBehaviour {
 
 	IEnumerator Flash(float time, float intervalTime)
 	{
+		invincible = true;
 		float elapsedTime = 0f;
 		int index = 0;
 		while(elapsedTime < time )
@@ -62,5 +69,7 @@ public class ApolloAI : MonoBehaviour {
 				yield return new WaitForSeconds(intervalTime);
 		}
 		mat.color = origColor;
+		invincible = false;
 	}
 }
+
