@@ -2,36 +2,39 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ApolloAI : MonoBehaviour {
+public class YmirAI : MonoBehaviour {
 
 	[SerializeField]
 	private int hp = 10;
-	private float speed = 5f;
 	private Rigidbody2D mRigidBody;
 	private string[] layers = {"Trash", "Default"};
+	private float timeSincePort;
 	private bool invincible = false;
 	public Text textHP;
-	public float stopL;
-	public float stopR;
+	public float blinkSpeed;
+	private int state = 0;
+	public Vector3 loke1;
+	public Vector3 loke2;
+	public Vector3 loke3;
+	public Vector3 loke4;
 
 	// Use this for initialization
 	void Start () {
-		mRigidBody = GetComponent<Rigidbody2D> ();
-		mRigidBody.velocity = new Vector2 (speed, 0);
 		textHP.text = "Enemy HP: " + hp;
+		timeSincePort = Time.time;
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (!invincible) {
-
+			
 			if(col.name == "Arrow(Clone)")
 			{
 				ArrowScript arrow = col.GetComponent<ArrowScript>();
 				hp -= arrow.getDamage();
 				if(hp <= 0)
 				{
-					Application.LoadLevel("s2");
+					Application.LoadLevel("GameOver");
 				}
 				Destroy (col.gameObject);
 				textHP.text = "Enemy HP: " + hp;
@@ -42,15 +45,30 @@ public class ApolloAI : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (Time.time - timeSincePort > blinkSpeed) {
+			state++;
+			if(state == 4) state = 0;
+			Vector3 position = new Vector3(0,0,0);
+			switch(state)
+			{
+			case 0:
+				position = loke1;
+				break;
+			case 1:
+				position = loke2;
+				break;
+			case 2:
+				position = loke3;
+				break;
+			case 3:
+				position = loke4;
+				break;
+			}
+			transform.localScale = new Vector3(-transform.localScale.x,transform.localScale.y,transform.localScale.z);
+			transform.position = position;
+			timeSincePort = Time.time;
+		}
 
-		if (mRigidBody.velocity.x >= 0 && transform.position.x > stopR) {
-			mRigidBody.velocity = new Vector2 (-mRigidBody.velocity.x, 0);
-			transform.localScale = new Vector3(-transform.localScale.x,transform.localScale.y,transform.localScale.z);
-		}
-		else if(mRigidBody.velocity.x < 0 && transform.position.x < stopL) {
-			mRigidBody.velocity = new Vector2 (-mRigidBody.velocity.x, 0);
-			transform.localScale = new Vector3(-transform.localScale.x,transform.localScale.y,transform.localScale.z);
-		}
 	}
 
 	IEnumerator Flash(float time, float intervalTime)
@@ -64,10 +82,13 @@ public class ApolloAI : MonoBehaviour {
 			
 			elapsedTime += Time.deltaTime;
 			index++;
-				yield return new WaitForSeconds(intervalTime);
+			yield return new WaitForSeconds(intervalTime);
 		}
 		GetComponent<SpriteRenderer>().sortingLayerName = "Default";
 		invincible = false;
 	}
+
 }
+
+
 

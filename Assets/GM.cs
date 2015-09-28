@@ -5,19 +5,40 @@ using System.Collections;
 
 public class GM : MonoBehaviour {
 
-	public Text timer;
+	private Text timer;
 	private TimeSpan timeSpan;
-	private float startTime;
+	private float startTime = -1;
+	public float endTime = -1;
+
+	void Awake()
+	{
+		DontDestroyOnLoad (this);
+	}
 
 	// Use this for initialization
 	void Start () {
-		startTime = Time.time;
+		if (startTime == -1) {
+			startTime = Time.time;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		timeSpan += TimeSpan.FromSeconds (Time.deltaTime);
-		Debug.Log (timeSpan.Seconds);
-		timer.text = "Time: " + String.Format("{0:00}:{1:00}",timeSpan.Minutes,timeSpan.Seconds);
+		if (timer == null) {
+			GameObject obj = GameObject.Find ("Text Time");
+			if(obj != null)
+			{
+				timer = GameObject.Find ("Text Time").GetComponent<Text>();
+			}
+		}
+		if (timer != null) {
+			timer.text = "Time: " + (Time.time - startTime).ToString ("F3");
+		}
+	}
+
+	public void setFinalTime()
+	{
+		endTime = Time.time - startTime;
+		startTime = -1;
 	}
 }
