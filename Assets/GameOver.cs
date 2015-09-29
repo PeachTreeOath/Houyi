@@ -13,6 +13,8 @@ public class GameOver : MonoBehaviour {
 			GM gm = obj.GetComponent<GM>();
 			gm.setFinalTime ();
 			timer.text = "TIME: " + gm.endTime.ToString("F3") + " SECONDS";
+			int ms = (int)(gm.endTime * 1000);
+			KongregateAPI.Submit("Time", ms);
 		}
 
 	}

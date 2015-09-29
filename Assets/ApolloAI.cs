@@ -13,7 +13,7 @@ public class ApolloAI : MonoBehaviour {
 	public Text textHP;
 	public float stopL;
 	public float stopR;
-
+	
 	// Use this for initialization
 	void Start () {
 		mRigidBody = GetComponent<Rigidbody2D> ();
